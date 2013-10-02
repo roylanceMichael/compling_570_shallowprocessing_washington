@@ -7,6 +7,13 @@ test("ctor", function() {
 	ok(tokenizer != null, "should be able to build object");
 });
 
+test("finds empty correctly", function() {
+	var tokenizer = new Tokenizer();
+	
+	tokenizer.parseLine("");
+	strictEqual(tokenizer.getFoundTokens().length, 0, "should have found empty correctly");
+});
+
 test("finds email address", function() {
 	var tokenizer = new Tokenizer();
 	
@@ -151,6 +158,29 @@ test("finds 555-555-5555", function() {
 
 	tokenizer.parseLine(testValue);
 	var tokens = tokenizer.getFoundTokens();
-	strictEqual(tokens.length, 1, "should have found 3 tokens");
+	strictEqual(tokens.length, 1, "should have found 1 token");
 	strictEqual(tokens[0], testValue, "should have found " + testValue);
+});
+
+// vocabulary tests
+test("reports empty correctly", function() {
+	var vocabulary = new Vocabulary();
+	var testValue = "";
+
+	vocabulary.parseLine(testValue);
+	var tokens = vocabulary.reportFrequencyArray();
+	strictEqual(tokens.length, 0, "should have found 0 tokens");
+});
+
+test("reports hello hello world", function() {
+	var vocabulary = new Vocabulary();
+	var testValue = "hello hello world";
+
+	vocabulary.parseLine(testValue);
+	var tokens = vocabulary.reportFrequencyArray();
+	strictEqual(tokens.length, 2, "should have found 2 tokens");
+	strictEqual(tokens[0][0], "hello", "should have found hello");
+	strictEqual(tokens[0][1], 2, "should have found 2");
+	strictEqual(tokens[1][0], "world", "should have found world");
+	strictEqual(tokens[1][1], 1, "should have found 1");
 });

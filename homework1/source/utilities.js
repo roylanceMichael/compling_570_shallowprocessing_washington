@@ -15,6 +15,12 @@ Utilities.prototype = {
 		}
 
 		console.log(workSpace);
+	},
+
+	printsStrArrayToConsoleByLine: function(strArray) {
+		for(var j = 0; j < strArray.length; j++) {
+			console.log(strArray[j][0] + " " + strArray[j][1]);
+		}
 	}
 }
 

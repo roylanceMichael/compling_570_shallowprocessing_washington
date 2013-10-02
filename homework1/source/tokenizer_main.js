@@ -5,6 +5,7 @@ process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
 var tmpStr = "";
+var totalTokens = 0;
 var util = new Utilities();
 
 process.stdin.on("data", function(chunk) {
@@ -14,6 +15,7 @@ process.stdin.on("data", function(chunk) {
 		var tokenizer = new Tokenizer();
 		tokenizer.parseLine(splitLines[i]);
 		var tokens = tokenizer.getFoundTokens();
+		totalTokens = totalTokens + tokens.length;
 		util.printStrArrayToConsole(tokens);
 	}
 
@@ -27,6 +29,8 @@ process.stdin.on("end", function(){
 		var tokenizer = new Tokenizer();
 		tokenizer.parseLine(splitLines[i]);
 		var tokens = tokenizer.getFoundTokens();
+		totalTokens = totalTokens + tokens.length;
 		util.printStrArrayToConsole(tokens);
 	}
+	
 });
