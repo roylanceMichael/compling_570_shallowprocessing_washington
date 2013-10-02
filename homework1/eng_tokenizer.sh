@@ -1,2 +1,2 @@
 #!/bin/sh
-node source/main.js
+node source/tokenizer_main.js

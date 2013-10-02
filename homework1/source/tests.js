@@ -102,3 +102,55 @@ test("finds mr. u.s.a. ph.d", function() {
 	strictEqual(tokens[1], testValue1, "should have found " + testValue1);
 	strictEqual(tokens[2], testValue2, "should have found " + testValue2);
 });
+
+test("finds http://washington.edu", function() {
+	var tokenizer = new Tokenizer();
+	var testValue = "http://washington.edu";
+
+	tokenizer.parseLine(testValue);
+	var tokens = tokenizer.getFoundTokens();
+	strictEqual(tokens.length, 1, "should have found 3 tokens");
+	strictEqual(tokens[0], testValue, "should have found " + testValue);
+});
+
+test("finds www.washington.edu", function() {
+	var tokenizer = new Tokenizer();
+	var testValue = "www.washington.edu";
+
+	tokenizer.parseLine(testValue);
+	var tokens = tokenizer.getFoundTokens();
+	strictEqual(tokens.length, 1, "should have found 3 tokens");
+	strictEqual(tokens[0], testValue, "should have found " + testValue);
+});
+
+test("finds hello-world test", function() {
+	var tokenizer = new Tokenizer();
+	var testValue = "hello-world";
+	var testValue1 = "test";
+
+	tokenizer.parseLine(testValue + " " + testValue1);
+	var tokens = tokenizer.getFoundTokens();
+	strictEqual(tokens.length, 2, "should have found 3 tokens");
+	strictEqual(tokens[0], testValue, "should have found " + testValue);
+	strictEqual(tokens[1], testValue1, "should have found " + testValue1);
+});
+
+test("finds (555) 555-5555", function() {
+	var tokenizer = new Tokenizer();
+	var testValue = "(555) 555-5555";
+
+	tokenizer.parseLine(testValue);
+	var tokens = tokenizer.getFoundTokens();
+	strictEqual(tokens.length, 1, "should have found 3 tokens");
+	strictEqual(tokens[0], testValue, "should have found " + testValue);
+});
+
+test("finds 555-555-5555", function() {
+	var tokenizer = new Tokenizer();
+	var testValue = "555-555-5555";
+
+	tokenizer.parseLine(testValue);
+	var tokens = tokenizer.getFoundTokens();
+	strictEqual(tokens.length, 1, "should have found 3 tokens");
+	strictEqual(tokens[0], testValue, "should have found " + testValue);
+});
