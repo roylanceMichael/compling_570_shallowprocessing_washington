@@ -1,5 +1,5 @@
 #!/bin/sh
-regex='Empty or invalid result of composition with transducer'
+regex='^Empty or invalid result of composition with transducer$'
 
 cat $2 | while read line; do
 	textfile_listing2=$(echo $line | carmel -sli $1)
