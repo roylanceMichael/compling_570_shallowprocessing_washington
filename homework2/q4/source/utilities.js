@@ -1,10 +1,17 @@
+if(TransitionState == null) {
+	TransitionState = require("./transitionState.js");
+}
+
 function Utilities() {
 
 }
 
 Utilities.prototype = {
-	
-	returnObjOfParen: function(strVal) {
+	cleanseInput: function(strVal) {
+		return strVal.replace(/'/g, "").replace(/"/g, "");
+	},
+
+	returnTransitionState: function(strVal) {
 		var parenIndexes = this.parenIndex(strVal);
 
 		if(parenIndexes.start == -1) {
@@ -26,9 +33,14 @@ Utilities.prototype = {
 		// assuming correct for this assignment
 		var anotherSubStr = subStr1.substring(otherParenIndexes.start, otherParenIndexes.end);
 		var subLevelValues = this.returnListOfValuesBeforeParen(anotherSubStr);
-		levelObj[values[0]] = subLevelValues;
+		
+		var transitionState = new TransitionState(values[0], 
+			subLevelValues.splice(0, 1)[0], 
+			// replacing ' and " with empty string
+			this.cleanseInput(subLevelValues.splice(0, 1)[0]), 
+			subLevelValues);
 
-		return levelObj;
+		return transitionState;
 	},
 
 	returnListOfValuesBeforeParen: function(strVal) {
