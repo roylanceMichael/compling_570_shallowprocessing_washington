@@ -1,5 +1,5 @@
 // load in if we're coming from node.js
-if(Utilities == null) {
+if(typeof Utilities == "undefined") {
 	Utilities = require("./utilities.js");
 }
 
@@ -56,24 +56,78 @@ Fsa.prototype = {
 		return currentToStates;
 	},
 
+	finalInputOkay: function(currentState) {
+		var finalStates = this.getPreviousTransitionGivenInput(currentState);
+
+		// if we have a recursive state, then we're okay
+		if(finalStates.length == 0) {
+			return true;
+		}
+
+		var allRecursive = true;
+		for(var i = 0; i < finalStates.length; i++) {
+			if(finalStates[i].to != finalStates[i].from) {
+				return false;
+			}
+		}
+
+		return allRecursive;
+	},
+
 	processInput: function(input) {
 		// assuming the input is just in one line, the main file will split it for me...
 		// this function will simply return a yes or no
-		var splitValues = input.split("\n");
+		var splitValues = input.split(/\s+/);
 
 		// I think I will work my way back, I know what the final state should be
 		// therefore I can start at the end and try each branch
 		// assuming there are multiple ways to get there...
 
+		// stack structure
+		var workSpace = [];
+
 		// get final states
 		var finalStates = this.getPreviousTransitionGivenInput(this.endState);
 
-		for(var i = splitValues.length-1; i >= 0; i--) {
-			// starting at the end
-			//var cleansedInput = splitValues[i].replace(/\)
-
+		for(var i = 0; i < finalStates.length; i++) {
+			var workObject = { "wordIdx": splitValues.length - 1, "state": finalStates[i] };
+			workSpace.push(workObject);
 		}
+
+		while(workSpace.length > 0) {
+			var workObject = workSpace.splice(0, 1)[0];
+
+			var word = this.utilities.cleanseInput(splitValues[workObject.wordIdx]);
+			var state = workObject.state;
+
+			// does this transition to the previous state?
+			if(state.val == word) {
+				// are we at the beginning of the string?
+				if(workObject.wordIdx == 0) {
+
+					// check to see if we've successfully reached traversed the machine
+					if(this.finalInputOkay(word.state)) {
+						return true;
+					}
+
+				} else {
+
+					// create new work object(s)
+					var previousWordIdx = workObject.wordIdx-1;
+					var previousWord = this.utilities.cleanseInput(splitValues[previousWordIdx]);
+					var previousStates = this.getPreviousTransitionGivenInput(state.to);
+					
+					for(var i = 0; i < previousStates.length; i++) {
+						var newWorkObject = { "wordIdx": previousWordIdx, "state": previousStates[i] };
+						workSpace.push(newWorkObject);
+					}
+				}
+			} 
+		}
+
+		// if we're reached this far, we haven't succeeded in finding a correct path
+		return false;
 	}
 };
 
-exports = Fsa;
+module.exports = Fsa;

@@ -331,7 +331,49 @@ test("getPreviousTransitionGivenInput more complex", function() {
 	strictEqual("f", secondState.val);
 });
 
-test("processinput fsa multiline given example happy path", function() {
+test("processinput fsa 'a'", function() {
+	var fsa = new Fsa();
+	var input = 
+"A\n\
+(A (A 'a'))\n\
+";
+	fsa.parse(input);
+
+	// let's process the input
+	var userInput = "\"a\"";
+	var res = fsa.processInput(userInput);
+	strictEqual(true, res);
+});
+
+test("processinput fsa 'b'", function() {
+	var fsa = new Fsa();
+	var input = 
+"A\n\
+(A (A 'a'))\n\
+";
+	fsa.parse(input);
+
+	// let's process the input
+	var userInput = "\"b\"";
+	var res = fsa.processInput(userInput);
+	strictEqual(false, res);
+});
+
+test("processinput fsa 'a' 'a'", function() {
+	var fsa = new Fsa();
+	var input = 
+"A\n\
+(A (A 'a'))\n\
+";
+	fsa.parse(input);
+
+	// let's process the input
+	var userInput = "\"a\" \"a\"";
+	var res = fsa.processInput(userInput);
+	strictEqual(true, res);
+});
+
+test("processinput fsa 'a' 'a' 'a'", function() {
 	var fsa = new Fsa();
 	var input = 
 "A\n\
@@ -343,5 +385,47 @@ test("processinput fsa multiline given example happy path", function() {
 	var userInput = "\"a\" \"a\" \"a\"";
 	var res = fsa.processInput(userInput);
 	strictEqual(true, res);
+});
+
+test("processinput fsa 'a' 'a' 'b'", function() {
+	var fsa = new Fsa();
+	var input = 
+"A\n\
+(A (A 'a'))\n\
+";
+	fsa.parse(input);
+
+	// let's process the input
+	var userInput = "\"a\" \"a\" \"b\"";
+	var res = fsa.processInput(userInput);
+	strictEqual(false, res);
+});
+
+test("processinput fsa 'a' 'b' 'a'", function() {
+	var fsa = new Fsa();
+	var input = 
+"A\n\
+(A (A 'a'))\n\
+";
+	fsa.parse(input);
+
+	// let's process the input
+	var userInput = "\"a\" \"b\" \"a\"";
+	var res = fsa.processInput(userInput);
+	strictEqual(false, res);
+});
+
+test("processinput fsa 'a' 'c'", function() {
+	var fsa = new Fsa();
+	var input = 
+"A\n\
+(A (A 'a'))\n\
+";
+	fsa.parse(input);
+
+	// let's process the input
+	var userInput = "\"a\" \"c\"";
+	var res = fsa.processInput(userInput);
+	strictEqual(false, res);
 });
 

@@ -4,3 +4,5 @@ function TransitionState(from, to, val, props) {
 	this.val = val;
 	this.props = props;
 }
+
+module.exports = TransitionState;

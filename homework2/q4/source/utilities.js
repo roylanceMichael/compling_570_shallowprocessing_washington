@@ -1,4 +1,4 @@
-if(TransitionState == null) {
+if(typeof TransitionState == "undefined") {
 	TransitionState = require("./transitionState.js");
 }
 
@@ -8,7 +8,7 @@ function Utilities() {
 
 Utilities.prototype = {
 	cleanseInput: function(strVal) {
-		return strVal.replace(/'/g, "").replace(/"/g, "");
+		return strVal.replace(/'/g, "").replace(/"/g, "").trim();
 	},
 
 	returnTransitionState: function(strVal) {
@@ -85,3 +85,5 @@ Utilities.prototype = {
 		return { "start": -1, "end": -1 };
 	}
 };
+
+module.exports = Utilities;
