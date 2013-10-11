@@ -1,0 +1,5 @@
+"a" "a" "b" => true
+"a" "a" => true
+"b" => true
+"a" "b" "a" => true
+"a" "c" => false
