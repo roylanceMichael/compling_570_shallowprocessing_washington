@@ -6,6 +6,7 @@ if(typeof Utilities == "undefined") {
 // internal to this function only
 function Fsa() {
 	this.endState = "";
+	this.epsilonState = "*e*";
 	this.transitionStates = [];
 	this.utilities = new Utilities();
 }
@@ -74,6 +75,21 @@ Fsa.prototype = {
 		return allRecursive;
 	},
 
+	existsAlready: function(workObjects, workObject) {
+		for(var i = 0; i < workObjects.length; i++) {
+
+			var compareObj = workObjects[i];
+			if(compareObj.wordIdx == workObject.wordIdx &&
+				compareObj.state.to == workObject.state.to &&
+				compareObj.state.from == workObject.state.from &&
+				compareObj.state.val == workObject.state.val) {
+				return true;
+			}
+		}
+
+		return false;
+	},
+
 	processInput: function(input) {
 		// assuming the input is just in one line, the main file will split it for me...
 		// this function will simply return a yes or no
@@ -89,12 +105,15 @@ Fsa.prototype = {
 		// get final states
 		var finalStates = this.getPreviousTransitionGivenInput(this.endState);
 
+		// I don't ever want to push an epsilon state..
+
 		for(var i = 0; i < finalStates.length; i++) {
 			var workObject = { "wordIdx": splitValues.length - 1, "state": finalStates[i] };
 			workSpace.push(workObject);
 		}
 
 		while(workSpace.length > 0) {
+
 			var workObject = workSpace.splice(0, 1)[0];
 
 			var word = this.utilities.cleanseInput(splitValues[workObject.wordIdx]);
@@ -104,22 +123,49 @@ Fsa.prototype = {
 			if(state.val == word) {
 				// are we at the beginning of the string?
 				if(workObject.wordIdx == 0) {
-
 					// check to see if we've successfully reached traversed the machine
-					if(this.finalInputOkay(word.state)) {
+					if(this.finalInputOkay(state.from)) {
 						return true;
 					}
-
-				} else {
+				} 
+				else {
 
 					// create new work object(s)
 					var previousWordIdx = workObject.wordIdx-1;
-					var previousWord = this.utilities.cleanseInput(splitValues[previousWordIdx]);
-					var previousStates = this.getPreviousTransitionGivenInput(state.to);
+					var previousStates = this.getPreviousTransitionGivenInput(state.from);
 					
 					for(var i = 0; i < previousStates.length; i++) {
+			
 						var newWorkObject = { "wordIdx": previousWordIdx, "state": previousStates[i] };
-						workSpace.push(newWorkObject);
+
+						// no sense adding the same thing twice
+						if(!this.existsAlready(workSpace, newWorkObject)) {
+							workSpace.push(newWorkObject);
+						}
+					}
+				}
+			}
+			// let's handle epsilons by themselves
+			else if(state.val == this.epsilonState) {
+
+				// we basically want to just skip this state and go to the next with the last word intact
+				if(workObject.wordIdx == 0) {
+					if(this.finalInputOkay(state.from)) {
+						return true;
+					}
+				}
+				else {
+
+					var previousStates = this.getPreviousTransitionGivenInput(state.from);
+
+					for(var i = 0; i < previousStates.length; i++) {
+						
+						var newWorkObject = { "wordIdx": workObject.wordIdx, "state": previousStates[i] };
+						
+						// no sense adding the same thing twice
+						if(!this.existsAlready(workSpace, newWorkObject)) {
+							workSpace.push(newWorkObject);
+						}
 					}
 				}
 			} 

@@ -1,5 +1,5 @@
-"a" "a" "b" => false
-"a" "a" => false
-"b" => false
-"a" "b" "a" => false
-"a" "c" => false
+"a" "a" "b" => yes
+"a" "a" => yes
+"b" => yes
+"a" "b" "a" => no
+"a" "c" => no
