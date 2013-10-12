@@ -1,0 +1,9 @@
+fst1 for {(a2n, bn) | n >=0} 
+
+a a
+b
+
+-------
+F
+(S (B a))
+(B (F a b))
