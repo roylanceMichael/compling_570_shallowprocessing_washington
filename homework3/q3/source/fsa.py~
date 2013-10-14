@@ -9,7 +9,7 @@ class Fsa:
 		self.utilities = utilities.Utilities()
 
 	def parse(self, strVal):
-		splitStrVal =   re.split("\n", strVal)
+		splitStrVal = re.split("\n", strVal)
 
 		# leave if nothing given
 		if(len(splitStrVal) == 0):
