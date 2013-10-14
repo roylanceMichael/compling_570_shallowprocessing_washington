@@ -35,6 +35,55 @@ class FstTests(unittest.TestCase):
 	def test_ctor(self):
 		self.assertTrue(1==1)
 
+	# So your code needs to 
+	# follow multiple paths for an input string and check whether any of the paths ends 
+	# at a final state.
+	# So your code needs to 
+	# follow multiple paths for an input string and check whether any of the paths ends 
+ 	# at a final state.
+	# If there are multiple paths that end at a final state, choose the one 
+	# with the highest probability. Your algorithm can be an extension of the algorithm 
+	# in Figure 2.19 on Page 35 of J&M. 
+
+	def test_correctIdentifiesOutputAndWeightInFsa(self):
+		fsaObj = fsa.Fsa()
+		testStr = """S
+		(S (S "they" "PRO" 1.0))
+		(S (S "can" "AUX" 0.99))
+		(S (S "can" "VERB" 0.01))
+		(S (S "fish" "NOUN" 0.7))
+		(S (S "fish" "VERB" 0.3))
+		"""
+
+		fsaObj.parse(testStr)
+
+		self.assertTrue(len(fsaObj.transitionStates) == 5)
+
+		firstTranState = fsaObj.transitionStates[0]
+		self.assertTrue(firstTranState.fromState == "S")
+		self.assertTrue(firstTranState.toState == "S")
+		self.assertTrue(firstTranState.value == "they")
+		self.assertTrue(firstTranState.output == "PRO")
+		self.assertTrue(firstTranState.weight == "1.0")
+
+	def test_correctIdentifiesOutputAndWeightInFsa(self):
+		fsaObj = fsa.Fsa()
+		testStr = """S
+		(S (S "they" "PRO" 1.0))
+		(S (S "can" "AUX" 0.99))
+		(S (S "can" "VERB" 0.01))
+		(S (S "fish" "NOUN" 0.7))
+		(S (S "fish" "VERB" 0.3))
+		"""
+
+		fsaObj.parse(testStr)
+
+		# "they" "can" "fish" => (PRO) (AUX) (NOUN)
+		userInput = "\"they\" \"can\" \"fish\""
+		expectedResult = "(PRO) (AUX) (NOUN)"
+
+		actualResult = fsaObj.processFst(userInput)
+		self.assertTrue(actualResult == expectedResult)
 
 # old tests
 class TransitionStateTests(unittest.TestCase):

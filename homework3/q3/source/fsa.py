@@ -39,6 +39,9 @@ class Fsa:
 
 		return currentStates
 
+	def processFst(self, userInput):
+		
+
 	def processInput(self, userInput):
 		# assuming the input is just in one line, the main file will split it for me...
 		# this function will simply return a yes or no
