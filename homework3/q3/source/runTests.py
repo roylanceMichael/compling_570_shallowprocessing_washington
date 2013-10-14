@@ -80,7 +80,7 @@ class FstTests(unittest.TestCase):
 
 		# "they" "can" "fish" => (PRO) (AUX) (NOUN)
 		userInput = "\"they\" \"can\" \"fish\""
-		expectedResult = "(PRO) (AUX) (NOUN)"
+		expectedResult = "\"(PRO)\" \"(AUX)\" \"(NOUN)\""
 
 		actualResult = fsaObj.processFst(userInput)
 		self.assertTrue(actualResult == expectedResult)

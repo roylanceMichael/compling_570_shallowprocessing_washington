@@ -14,6 +14,7 @@ class TransitionState:
 			self.weight = util.cleanseInput(props[1])
 		elif(len(props) > 0):
 			self.output = util.cleanseInput(props[0])
+			self.weight = 1
 		else:
 			self.output = None
 			self.weight = None

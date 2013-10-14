@@ -39,16 +39,21 @@ class Fsa:
 
 		return currentStates
 
+	# fst and wfst function
 	def processFst(self, userInput):
-		
+		# assuming the input is just in one line, the main file will split it for me...
+		# this function will simply return a yes or no
+		splitValues = re.split("\s+", userInput)
 
+
+
+	# fsa function
 	def processInput(self, userInput):
 		# assuming the input is just in one line, the main file will split it for me...
 		# this function will simply return a yes or no
 		splitValues = re.split("\s+", userInput)
 
 		# working our way back
-
 		# stack structure
 		workSpace = []
 
@@ -71,7 +76,7 @@ class Fsa:
 
 			# does this transition to the previous state?
 			if(state.value == word):
-				if(isBeginningWord and self.finalInputOkay(state.fromState)):
+				if(isBeginningWord and self.isBeginningState(state.fromState)):
 					return True
 				else:
 					previousWordIdx = wordIdx - 1
@@ -82,7 +87,7 @@ class Fsa:
 						workSpace.append(newWorkObject)
 
 			elif(state.value == self.epsilonState):
-				if(isBeginningWord and self.finalInputOkay(state.fromState)):
+				if(isBeginningWord and self.isBeginningState(state.fromState)):
 					return True
 				else:
 					previousStates = self.getPreviousTransitions(state.fromState)
@@ -91,11 +96,10 @@ class Fsa:
 						newWorkObject = { "wordIdx": wordIdx, "state": previousStates[i] }
 						workSpace.append(newWorkObject)
 
-
 		return False
 
 	# (should be) private helper functions
-	def finalInputOkay(self, currentState):
+	def isBeginningState(self, currentState):
 		finalStates = self.getPreviousTransitions(currentState)
 
 		if(len(finalStates) == 0):
