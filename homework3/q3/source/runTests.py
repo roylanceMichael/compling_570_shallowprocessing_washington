@@ -7,7 +7,7 @@ class FstTests(unittest.TestCase):
 	
 	# this is where we'll continue on with testing
 	def test_ctor(self):
-		self.assertTrue(1==2)
+		self.assertTrue(1==3)
 
 
 # old tests
