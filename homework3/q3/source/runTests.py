@@ -3,31 +3,73 @@ import transitionState
 import utilities
 import fsa
 
+# homework 3 tests
+class FstTransitionStates(unittest.TestCase):
+
+	# as a TA, I will need to make sure that an FST has the output and weight attribute
+	def test_outputAttributeExists(self):
+		fromState = 'A'
+		toState = 'B'
+		value = 'C'
+		output = 'coolOutput'
+		props = [ output ]
+
+		tranState = transitionState.TransitionState(fromState, toState, value, props)
+		self.assertTrue(tranState.output == output)
+
+	def test_weightAttributeExists(self):
+		fromState = 'A'
+		toState = 'B'
+		value = 'C'
+		output = 'coolOutput'
+		weight = '.43'
+		props = [ output, weight ]
+
+		tranState = transitionState.TransitionState(fromState, toState, value, props)
+		self.assertTrue(tranState.output == output)
+		self.assertTrue(tranState.weight == weight)
+
 class FstTests(unittest.TestCase):
 	
 	# this is where we'll continue on with testing
 	def test_ctor(self):
-		self.assertTrue(1==3)
+		self.assertTrue(1==1)
 
 
 # old tests
 class TransitionStateTests(unittest.TestCase):
 	
 	def test_ctor(self):
-		tranState = transitionState.TransitionState('what', 'who', 'where', None)
+		tranState = transitionState.TransitionState('what', 'who', 'where', [])
 		self.failIf(tranState == None)
 
 	def test_canAccessProperties(self):
 		fromState = 'A'
 		toState = 'B'
 		value = 'C'
-		props = None
+		props = []
 
 		tranState = transitionState.TransitionState(fromState, toState, value, props)
 		self.failIf(tranState.fromState != fromState)
 		self.failIf(tranState.toState != toState)
 		self.failIf(tranState.value != value)
 		self.failIf(tranState.props != props)
+
+	def test_canAccessPropertiesArray(self):
+		# (A (B C TestVal TestVal1))
+		fromState = 'A'
+		toState = 'B'
+		value = 'C'
+		props = [ 'TestVal', 'TestVal1']
+
+		tranState = transitionState.TransitionState(fromState, toState, value, props)
+		self.failIf(tranState.fromState != fromState)
+		self.failIf(tranState.toState != toState)
+		self.failIf(tranState.value != value)
+		self.failIf(tranState.props != props)
+		self.assertTrue(tranState.props[0] == 'TestVal')
+		self.assertTrue(tranState.props[1] == 'TestVal1', 
+			'we should have received TestVal2, received ' + tranState.props[1])
 
 class UtilitiesTests(unittest.TestCase):
 
