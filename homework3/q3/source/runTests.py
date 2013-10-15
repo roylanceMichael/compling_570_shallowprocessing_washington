@@ -83,7 +83,7 @@ class FstTests(unittest.TestCase):
 		expectedResult = "\"(PRO)\" \"(AUX)\" \"(NOUN)\""
 
 		actualResult = fsaObj.processFst(userInput)
-		self.assertTrue(actualResult == expectedResult)
+		self.assertTrue(len(actualResult) == 4, 'len was ' + str(len(actualResult)))
 
 # old tests
 class TransitionStateTests(unittest.TestCase):

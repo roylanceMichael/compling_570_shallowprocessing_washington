@@ -1,5 +1,6 @@
 import re
 import utilities
+import wordTransitions
 
 class Fsa:
 	def __init__(self):
@@ -44,14 +45,7 @@ class Fsa:
 		# assuming the input is just in one line, the main file will split it for me...
 		# this function will simply return a yes or no
 		splitValues = re.split("\s+", userInput)
-
-
-
-	# fsa function
-	def processInput(self, userInput):
-		# assuming the input is just in one line, the main file will split it for me...
-		# this function will simply return a yes or no
-		splitValues = re.split("\s+", userInput)
+		listOfAcceptedStates = []
 
 		# working our way back
 		# stack structure
@@ -62,41 +56,55 @@ class Fsa:
 
 		# add in all the work objects
 		for i in range(0, len(finalStates)):
-			workObject = { "wordIdx": len(splitValues) - 1, "state": finalStates[i] }
+			workObject = wordTransitions.WordTransitions(len(splitValues)-1, finalStates[i], [])
 			workSpace.append(workObject)
 
 		while(len(workSpace) > 0):
 			workObject = workSpace.pop(0)
 
-			wordIdx = workObject["wordIdx"]
+			wordIdx = workObject.wordIdx
+	
 			isBeginningWord = wordIdx == 0
 			word = self.utilities.cleanseInput(splitValues[wordIdx])
 
-			state = workObject["state"]
+			state = workObject.currentState
+			newStateList = workObject.previousStates
+			newStateList.append(state)
 
 			# does this transition to the previous state?
 			if(state.value == word):
 				if(isBeginningWord and self.isBeginningState(state.fromState)):
-					return True
+					listOfAcceptedStates.append(newStateList)
 				else:
 					previousWordIdx = wordIdx - 1
+					
+					# don't pump bad indexes in 
+					if(previousWordIdx < 0):
+						continue
+
 					previousStates = self.getPreviousTransitions(state.fromState)
 
 					for i in range(0, len(previousStates)):
-						newWorkObject = { "wordIdx": previousWordIdx, "state": previousStates[i] }
+						newWorkObject = wordTransitions.WordTransitions(previousWordIdx, previousStates[i], newStateList)
 						workSpace.append(newWorkObject)
 
 			elif(state.value == self.epsilonState):
 				if(isBeginningWord and self.isBeginningState(state.fromState)):
-					return True
+					listOfAcceptedStates.append(newStateList)
 				else:
 					previousStates = self.getPreviousTransitions(state.fromState)
 
 					for i in range(0, len(previousStates)):
-						newWorkObject = { "wordIdx": wordIdx, "state": previousStates[i] }
+						newWorkObject = wordTransitions.WordTransitions(wordIdx, previousStates[i], newStateList)
 						workSpace.append(newWorkObject)
 
-		return False
+		return listOfAcceptedStates
+
+	# fsa function
+	def processInput(self, userInput):
+		res = self.processFst(userInput)
+
+		return len(res) > 0
 
 	# (should be) private helper functions
 	def isBeginningState(self, currentState):
