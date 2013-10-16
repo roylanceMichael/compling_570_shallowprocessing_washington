@@ -1,3 +1,4 @@
+from decimal import *
 import re
 import utilities
 import wordTransitions
@@ -10,7 +11,7 @@ class Fsa:
 		self.utilities = utilities.Utilities()
 
 	def parse(self, strVal):
-		splitStrVal =   re.split("\n", strVal)
+		splitStrVal = re.split("\n", strVal)
 
 		# leave if nothing given
 		if(len(splitStrVal) == 0):
@@ -40,6 +41,44 @@ class Fsa:
 
 		return currentStates
 
+	def returnHighestProb(self, userInput):
+		acceptableStates = self.processFst(userInput)
+
+		highestProbability = Decimal(0)
+		bestPath = None
+
+		for i in range(0, len(acceptableStates)):
+
+			statesToEvaluate = acceptableStates[i]
+
+			runningProbability = Decimal(1)
+
+			for j in range(0, len(statesToEvaluate)):
+
+				state = statesToEvaluate[j]
+
+				if(state.weight == None):
+					runningProbability = 0
+				else:
+					runningProbability = runningProbability * Decimal(state.weight)
+
+			if(runningProbability > highestProbability):
+				bestPath = statesToEvaluate
+				highestProbability = runningProbability
+
+		outputStr = ""
+		if(bestPath != None):
+			for i in range(len(bestPath)):
+				idx = len(bestPath) - i - 1
+
+				if(bestPath[idx].output == self.epsilonState):
+					outputStr = outputStr + " " + bestPath[idx].output
+				else:
+					outputStr = outputStr + " \"" + bestPath[idx].output + "\""
+
+		return (outputStr + " " + str(highestProbability)).strip()
+
+
 	# fst and wfst function
 	def processFst(self, userInput):
 		# assuming the input is just in one line, the main file will split it for me...
@@ -68,7 +107,13 @@ class Fsa:
 			word = self.utilities.cleanseInput(splitValues[wordIdx])
 
 			state = workObject.currentState
-			newStateList = workObject.previousStates
+			
+			# create a new list
+			newStateList = []
+			
+			for i in range(0, len(workObject.previousStates)):
+				newStateList.append(workObject.previousStates[i])
+
 			newStateList.append(state)
 
 			# does this transition to the previous state?

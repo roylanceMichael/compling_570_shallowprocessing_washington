@@ -80,10 +80,63 @@ class FstTests(unittest.TestCase):
 
 		# "they" "can" "fish" => (PRO) (AUX) (NOUN)
 		userInput = "\"they\" \"can\" \"fish\""
-		expectedResult = "\"(PRO)\" \"(AUX)\" \"(NOUN)\""
 
+		# this is an array of TransitionStates => [ tranState1, tranState2... ]
 		actualResult = fsaObj.processFst(userInput)
 		self.assertTrue(len(actualResult) == 4, 'len was ' + str(len(actualResult)))
+
+		# a list of transitions
+		for j in range(0, len(actualResult)):
+
+			firstResult = actualResult[j]
+
+			for i in range(0, len(firstResult)):
+				# will blow up if not correct object
+				testStr = firstResult[i].fromState + " -> " + firstResult[i].toState + " val: " + firstResult[i].value + " -> " + firstResult[i].output + " -> " + str(firstResult[i].weight)
+
+	def test_correctlyReturnsHighestProbabilityOutput(self):
+			fsaObj = fsa.Fsa()
+			testStr = """S
+			(S (S "they" "PRO" 1.0))
+			(S (S "can" "AUX" 0.99))
+			(S (S "can" "VERB" 0.01))
+			(S (S "fish" "NOUN" 0.7))
+			(S (S "fish" "VERB" 0.3))
+			"""
+
+			fsaObj.parse(testStr)
+
+			# "they" "can" "fish" => "PRO" "AUX" "NOUN" .7
+			userInput = "\"they\" \"can\" \"fish\""
+
+			# this is an array of TransitionStates => [ tranState1, tranState2... ]
+			actualResult = fsaObj.returnHighestProb(userInput)
+			expectedResult = "\"PRO\" \"AUX\" \"NOUN\" 0.6930"
+			self.assertTrue(expectedResult == actualResult, actualResult + " <-> " + expectedResult)
+
+	def test_correctlyDoesNotPrintEpsilon(self):
+				fsaObj = fsa.Fsa()
+				testStr = """S4
+				(S0 (S1 "they" "PRO" 1.0))
+				(S1 (S2 "can" "AUX" 0.8))
+				(S1 (S3 "fish" "VERB" 0.1))
+				(S1 (S3 "can" "VERB" 0.1))
+				(S2 (S3 "can" "VERB" 0.7))
+				(S2 (S3 "fish" "VERB" 0.3))
+				(S3 (S4 "fish" "NOUN" 0.5))
+				(S3 (S4 "can"  "NOUN" 0.1))
+				(S3 (S4 *e*  *e* 0.4))
+				"""
+
+				fsaObj.parse(testStr)
+
+				# "they" "can" "fish" => "PRO" "AUX" "NOUN" .7
+				userInput = "\"they\" \"can\" \"fish\""
+
+				# this is an array of TransitionStates => [ tranState1, tranState2... ]
+				actualResult = fsaObj.returnHighestProb(userInput)
+				expectedResult = "\"PRO\" \"AUX\" \"VERB\" *e* 0.0960"
+				self.assertTrue(expectedResult == actualResult, actualResult + " <-> " + expectedResult)
 
 # old tests
 class TransitionStateTests(unittest.TestCase):
